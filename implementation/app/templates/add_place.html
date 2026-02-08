@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-0">Dodaj restoran</h1>
+    <div class="text-muted">Unesi osnovne podatke, lokaciju i dodatne atribute (meta)</div>
+  </div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('places') }}">← Natrag</a>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+
+      <div class="col-12 col-lg-6">
+        <label class="form-label mb-1">Naziv</label>
+        <input class="form-control" name="name" required placeholder="npr. Pizzeria Luna">
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <label class="form-label mb-1">Adresa</label>
+        <input class="form-control" name="address" required placeholder="npr. Ilica 12, Zagreb">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label mb-1">Opis</label>
+        <textarea class="form-control" name="description" rows="3" placeholder="Kratak opis restorana..."></textarea>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label class="form-label mb-1">Latitude</label>
+        <input class="form-control" name="lat" placeholder="npr. 45.8130" >
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label class="form-label mb-1">Longitude</label>
+        <input class="form-control" name="lon" placeholder="npr. 15.9775" >
+      </div>
+
+      <!-- Structured meta inputs -->
+      <div class="col-12">
+        <h5 class="mb-2">Dodatne opcije</h5>
+
+        <div class="row g-2">
+          <div class="col-6 col-md-3 form-check">
+            <input class="form-check-input" type="checkbox" id="wifi" name="wifi" value="1">
+            <label class="form-check-label" for="wifi">Wi-Fi</label>
+          </div>
+          <div class="col-6 col-md-3 form-check">
+            <input class="form-check-input" type="checkbox" id="parking" name="parking" value="1">
+            <label class="form-check-label" for="parking">Parking</label>
+          </div>
+          <div class="col-6 col-md-3 form-check">
+            <input class="form-check-input" type="checkbox" id="pets" name="pets_allowed" value="1">
+            <label class="form-check-label" for="pets">Kućni ljubimci</label>
+          </div>
+          <div class="col-6 col-md-3 form-check">
+            <input class="form-check-input" type="checkbox" id="delivery" name="delivery" value="1">
+            <label class="form-check-label" for="delivery">Dostava</label>
+          </div>
+          <div class="col-6 col-md-3 form-check">
+            <input class="form-check-input" type="checkbox" id="takeaway" name="takeaway" value="1">
+            <label class="form-check-label" for="takeaway">Takeaway</label>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <label class="form-label mb-1">Razina cijena</label>
+            <select class="form-select" name="price_level">
+              <option value="">(nije definirano)</option>
+              <option value="1">€ (niska)</option>
+              <option value="2">€€ (srednja)</option>
+              <option value="3">€€€ (viša)</option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label mb-1">Kuhinja (odvoji zarezom)</label>
+            <input class="form-control" name="cuisine" placeholder="npr. italian, pizza">
+            <div class="form-text small">Upiši riječi odvojene zarezom (npr. italian, pizza).</div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label mb-1">Radno vrijeme (jedan po retku, format: ključ:vrijeme)</label>
+            <textarea class="form-control" name="opening_hours" rows="3" placeholder="npr. mon-fri:10-22; sat-sun:12-23"></textarea>
+            <div class="form-text small">Možeš koristiti format s točkama ili točkastim separatorom; ključ može biti 'mon-fri' ili 'mon' itd. (separate retke ili ';').</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary">
+          <span class="me-1">＋</span> Dodaj restoran
+        </button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('places') }}">Odustani</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+

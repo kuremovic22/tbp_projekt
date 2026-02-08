@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-0">Pretraga u krugu</h1>
+    <div class="text-muted">PostGIS pretraga restorana prema udaljenosti i filtrima</div>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-6">
+  <label class="form-label mb-1">Adresa</label>
+  <input class="form-control" name="address" value="{{ address or '' }}"
+         placeholder="npr. Trg bana Jelačića, Zagreb">
+  <div class="form-text">Upiši adresu ili koristi Moja lokacija</div>
+</div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label mb-1">Latitude</label>
+        <input class="form-control" name="lat" value="{{ lat }}" placeholder="npr. 45.8130">
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label mb-1">Longitude</label>
+        <input class="form-control" name="lon" value="{{ lon }}" placeholder="npr. 15.9775">
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label mb-1">Radijus (m)</label>
+        <input class="form-control" name="radius_m" value="{{ radius_m }}" placeholder="npr. 2000">
+        <div class="form-text">Tipično: 1000 / 2000 / 5000</div>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <div class="form-check">
+  <input class="form-check-input" type="checkbox" id="wifi" name="wifi" value="1"
+         {% if wifi=="1" %}checked{% endif %}>
+  <label class="form-check-label" for="wifi">Wi-Fi</label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="delivery" name="delivery" value="1"
+         {% if delivery=="1" %}checked{% endif %}>
+  <label class="form-check-label" for="delivery">Dostava</label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="takeaway" name="takeaway" value="1"
+         {% if takeaway=="1" %}checked{% endif %}>
+  <label class="form-check-label" for="takeaway">Takeaway</label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="pets" name="pets_allowed" value="1"
+         {% if pets_allowed=="1" %}checked{% endif %}>
+  <label class="form-check-label" for="pets">Pet-friendly</label>
+</div>
+
+
+        <div class="d-grid gap-2 d-md-flex">
+          <button class="btn btn-primary flex-grow-1">
+            <span class="me-1"></span> Traži
+          </button>
+          <button type="button" class="btn btn-outline-secondary flex-grow-1" onclick="useMyLocation()">
+            <span class="me-1"></span> Moja lokacija
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if err %}
+  <div class="alert alert-danger shadow-sm border-0">{{ err }}</div>
+{% endif %}
+
+{% if rows %}
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <div class="text-muted">
+      Pronađeno: <strong>{{ rows|length }}</strong>
+      {% if wifi=="1" %}
+        <span class="badge text-bg-info ms-2">wifi=true</span>
+      {% endif %}
+      {% if delivery=="1" %}
+  <span class="badge text-bg-info ms-1">delivery</span>
+{% endif %}
+{% if takeaway=="1" %}
+  <span class="badge text-bg-info ms-1">takeaway</span>
+{% endif %}
+{% if pets_allowed=="1" %}
+  <span class="badge text-bg-info ms-1">pets</span>
+{% endif %}
+
+    </div>
+  </div>
+
+  <div class="row g-3">
+    {% for r in rows %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="me-2">
+                <h2 class="h6 mb-1">
+                  <a class="text-decoration-none" href="{{ url_for('place_detail', place_id=r.id) }}">
+                    {{ r.name }}
+                  </a>
+                </h2>
+                <div class="text-muted small">{{ r.address }}</div>
+              </div>
+              <span class="badge text-bg-light border">
+                {{ r.distance_m }} m
+              </span>
+            </div>
+
+            <hr class="my-3">
+
+            <div class="d-flex justify-content-between">
+              <div>
+                <div class="text-muted small">Ocjena</div>
+                <div class="fw-semibold">{{ "%.2f"|format(r.avg_rating or 0) }}</div>
+              </div>
+              <div class="text-end">
+                <div class="text-muted small">Recenzije</div>
+                <div class="fw-semibold">{{ r.review_count or 0 }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-white border-0 pt-0">
+            <a class="btn btn-sm btn-outline-primary w-100" href="{{ url_for('place_detail', place_id=r.id) }}">
+              Detalji →
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <div class="text-muted">
+        Unesi lat/lon i radijus ili klikni <strong>Moja lokacija</strong> kako bi dobila rezultate.
+      </div>
+      <div class="mt-2 small text-muted">
+        Primjer (Trg bana Jelačića): lat <code>45.8130</code>, lon <code>15.9775</code>, radijus <code>2000</code>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<script>
+function useMyLocation() {
+  if (!navigator.geolocation) {
+    alert("Geolokacija nije podržana u ovom browseru.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lon = pos.coords.longitude.toFixed(6);
+
+      const latInput = document.querySelector('input[name="lat"]');
+      const lonInput = document.querySelector('input[name="lon"]');
+      const radiusInput = document.querySelector('input[name="radius_m"]');
+
+      latInput.value = lat;
+      lonInput.value = lon;
+
+      if (!radiusInput.value) radiusInput.value = "2000";
+
+      latInput.form.submit();
+    },
+    (err) => {
+      alert("Ne mogu dohvatiti lokaciju: " + err.message);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 60000
+    }
+  );
+}
+</script>
+
+{% endblock %}
+

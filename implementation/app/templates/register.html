@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6 col-lg-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h1 class="h4 mb-3">Registracija</h1>
+
+        <form method="post" class="vstack gap-2">
+          <div>
+            <label class="form-label mb-1">Korisničko ime</label>
+            <input class="form-control" name="username" required>
+          </div>
+
+          <div>
+            <label class="form-label mb-1">E-mail</label>
+            <input class="form-control" type="email" name="email" required>
+          </div>
+
+          <div>
+            <label class="form-label mb-1">Lozinka</label>
+            <input class="form-control" type="password" name="password" required>
+          </div>
+
+          <div>
+            <label class="form-label mb-1">Ponovi lozinku</label>
+            <input class="form-control" type="password" name="password2" required>
+          </div>
+
+          <button class="btn btn-success mt-2">Kreiraj račun</button>
+
+          <div class="text-muted small mt-2">
+            Već imaš račun? <a href="{{ url_for('login') }}">Prijavi se</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

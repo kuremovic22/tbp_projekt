@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-0">Restorani</h1>
+    <div class="text-muted">Pregled i pretraga restorana s agregiranim ocjenama</div>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('add_place') }}">
+    <span class="me-1">＋</span> Dodaj restoran
+  </a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-12 col-md-9">
+        <label class="form-label mb-1">Pretraga</label>
+        <input class="form-control" name="q" value="{{ q }}" placeholder="Pretraži po nazivu ili adresi">
+        <div class="form-text">Primjer: “Ilica”, “Sushi”, “Savska”</div>
+      </div>
+      <div class="col-12 col-md-3">
+        <button class="btn btn-primary w-100">
+          <span class="me-1"></span> Traži
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if places %}
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <div class="text-muted">
+      Prikazano: <strong>{{ places|length }}</strong>
+      {% if q %}
+        <span class="badge text-bg-light border ms-2">Upit: {{ q }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-3">
+    {% for p in places %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="me-2">
+                <h2 class="h6 mb-1">
+                  <a class="text-decoration-none" href="{{ url_for('place_detail', place_id=p.id) }}">
+                    {{ p.name }}
+                  </a>
+                </h2>
+                <div class="text-muted small">{{ p.address }}</div>
+              </div>
+
+              <div class="text-end">
+                <div class="badge text-bg-light border">
+                  * {{ "%.2f"|format(p.avg_rating or 0) }}
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-3">
+
+            <div class="d-flex justify-content-between">
+              <div>
+                <div class="text-muted small">Prosjek</div>
+                <div class="fw-semibold">{{ "%.2f"|format(p.avg_rating or 0) }}</div>
+              </div>
+              <div class="text-end">
+                <div class="text-muted small">Recenzije</div>
+                <div class="fw-semibold">{{ p.review_count or 0 }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer bg-white border-0 pt-0">
+            <a class="btn btn-sm btn-outline-primary w-100" href="{{ url_for('place_detail', place_id=p.id) }}">
+              Detalji →
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      {% if q %}
+        <div class="text-muted">Nema rezultata za upit <strong>{{ q }}</strong>.</div>
+        <div class="mt-2">
+          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('places') }}">Očisti pretragu</a>
+        </div>
+      {% else %}
+        <div class="text-muted">Trenutno nema restorana za prikaz.</div>
+        <div class="mt-2">
+          <a class="btn btn-primary btn-sm" href="{{ url_for('add_place') }}">Dodaj prvi restoran</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+
