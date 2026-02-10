@@ -43,7 +43,6 @@ BEGIN
     PERFORM recompute_place_stats(NEW.place_id);
     RETURN NEW;
   ELSIF TG_OP = 'UPDATE' THEN
-    -- if place changed, recompute both old and new
     IF NEW.place_id <> OLD.place_id THEN
       PERFORM recompute_place_stats(OLD.place_id);
     END IF;
